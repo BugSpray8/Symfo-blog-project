@@ -14,6 +14,7 @@ class TemperatureController extends AbstractController
     public function index(Temperature $temperature)
     {
         $degrees = $temperature->getTemperature();
+
         return $this->render('temperature/index.html.twig', [
             'degrees' => $degrees,
         ]);

@@ -2,11 +2,12 @@
 
 namespace App\Entity;
 
-use App\Repository\PostRepository;
 use \DateTime;
+use App\Repository\PostRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=PostRepository::class)
@@ -32,17 +33,24 @@ class Post
 
     /**
      * @ORM\Column(type="date")
+     * @Assert\GreaterThanOrEqual("today")
      */
     private $publishDate;
 
     /**
      * @ORM\ManyToMany(targetEntity=Tag::class, mappedBy="posts")
+     * @Assert\Count(min = 0, max = 5)
      */
     private $tags;
 
+    /**
+     * @ORM\ManyToOne(targetEntity=Category::class, inversedBy="posts")
+     */
+    private $category;
+
     public function __construct()
     {
-        $publishDate = new DateTime();
+        $this->publishDate = new DateTime();
         $this->tags = new ArrayCollection();
     }
 
@@ -56,7 +64,8 @@ class Post
         return $this->title;
     }
 
-    public function setTitle(string $title): self
+    // @warning Pour éviter l'erreur 'Expected argument of type "string", "null" given at property path "title".', il faut ajouter un ? devant string
+    public function setTitle(?string $title): self
     {
         $this->title = $title;
 
@@ -68,7 +77,8 @@ class Post
         return $this->body;
     }
 
-    public function setBody(string $body): self
+    // @warning Pour éviter l'erreur 'Expected argument of type "string", "null" given at property path "body".', il faut ajouter un ? devant string
+    public function setBody(?string $body): self
     {
         $this->body = $body;
 
@@ -121,6 +131,18 @@ class Post
             $this->tags->removeElement($tag);
             $tag->removePost($this);
         }
+
+        return $this;
+    }
+
+    public function getCategory(): ?Category
+    {
+        return $this->category;
+    }
+
+    public function setCategory(?Category $category): self
+    {
+        $this->category = $category;
 
         return $this;
     }

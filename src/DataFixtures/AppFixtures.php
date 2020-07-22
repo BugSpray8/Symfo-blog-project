@@ -15,19 +15,29 @@ class AppFixtures extends Fixture
     {
         $faker = Factory::create('fr_FR');
 
-        for ($i = 1; $i < 3; $i++) {
+        for ($i = 1; $i <= 20; $i++) {
             $tag = new Tag();
-            $tag = $tag->setName($faker->words($nb = 3, $asText = true));
-            $manager->persist($tag);        
+            $tag->setName($faker->words($nb = 3, $asText = true));
+            $manager->persist($tag);
         }
+
         $manager->flush();
 
-        for ($i = 1; $i < 3; $i++){
+        for ($i = 1; $i <= 20; $i++) {
+            $category = new Category();
+            $category->setName($faker->words($nb = 3, $asText = true));
+            $manager->persist($tag);
+        }
+
+        $manager->flush();
+
+        for ($i = 1; $i <= 20; $i++) {
             $post = new Post();
-            $post = $post->setTitle($faker->sentence($nbWords = 6, $variableNbWords = true) );
-            $post = $post->setBody($faker->text($maxNbChars = 1000));
-            $post = $post->setPublishDate ($faker->dateTimeBetween($startDate = '-1 years', $endDate = 'now', $timezone = null));
-            $post = $post->addTag ($tag);
+            $post->setTitle($faker->sentence($nbWords = 6, $variableNbWords = true));
+            $post->setBody($faker->text($maxNbChars = 1000));
+            $post->setPublishDate($faker->dateTimeBetween($startDate = '-1 year', $endDate = 'now', $timezone = null));
+            $post->addTag($tag);
+            $post->addCategory($category);
             $manager->persist($post);
         }
 
